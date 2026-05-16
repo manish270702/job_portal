@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
 
     try {
 
-        const { name, email, password, role } = req.body
+        const { name, email, password } = req.body
 
         const isUser = await userModel.findOne({ email })
 
@@ -24,19 +24,25 @@ exports.register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            role
         })
 
-        const token = jwt.sign(email, "process.env.JWT_SECRET")
+        const token = jwt.sign(
+            { email: user.email },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d",
+            }
+        )
 
         res.cookie("token", token)
 
         res.status(201).json({
             message: "User created successfully",
-            // user
+            user
         })
 
     } catch (error) {
+        console.log(error)
 
         res.status(500).json({
             message: error.message
@@ -65,15 +71,22 @@ exports.login = async (req, res) => {
                 message: "something went wrong"
             })
         }
-        const token = jwt.sign(email, "process.env.JWT_SECRET")
+        const token = jwt.sign(
+            { email: isuser.email },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d",
+            }
+        )
         res.cookie("token", token)
 
         res.status(201).json({
             message: "user login successsfully",
-            // isuser
+            isuser
         })
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: error.message
         })
@@ -84,9 +97,9 @@ exports.login = async (req, res) => {
 
 
 exports.getUserRole = (req, res) => {
-  const role = req.user.role;
+    const role = req.user.role;
 
-  res.status(200).json({
-    role,
-  });
+    res.status(200).json({
+        role,
+    });
 };

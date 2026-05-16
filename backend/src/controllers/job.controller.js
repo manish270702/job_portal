@@ -3,7 +3,7 @@ exports.createjob =async (req,res)=>{
     const {title,location,company,salary,jobtype} = req.body
 
     const user = req.user
-    // console.log(user);
+    // console.log(user); 
 
     if(user.role=="student"){
         return res.status(401).json({
