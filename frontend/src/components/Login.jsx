@@ -21,7 +21,7 @@ function Login() {
 
     if(response.status==409){
       toast.error(response.data.message);
-      navigate("/")
+      navigate("/login")
     }
 
     if (response.status==201){

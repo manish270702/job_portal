@@ -7,7 +7,7 @@ exports.checkRole = async (req, res, next) => {
 
     const {token} = req.cookies;
 
-    console.log(token);
+    // console.log(token);
 
     if (!token) {
       return res.status(401).json({
@@ -20,7 +20,7 @@ exports.checkRole = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    console.log(decoded);
+    // console.log(decoded);
 
     const user = await userModel.findOne({
       email: decoded.email,

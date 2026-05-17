@@ -11,7 +11,7 @@ exports.createjob =async (req,res)=>{
         })
     }
 
-    const jobAlreadyCreated = await jobModel.findOne({title,company})
+    const jobAlreadyCreated = await jobModel.findOne({title, company})
 
     if(jobAlreadyCreated){
         return res.status(409).json({
@@ -30,4 +30,29 @@ exports.createjob =async (req,res)=>{
 
 
     // console.log(title,location,company,salary,user._id,jobtype)
+}
+
+exports.showjobs = async (req,res)=>{
+    const page = req.query.page
+    const limit = req.query.limit
+
+    const skipIndex = (page-1)*limit
+    // console.log(page)
+
+    const [data, totalJobs] = await Promise.all([
+            jobModel.find().sort({ createdAt: -1 }).skip(skipIndex).limit(limit),
+            jobModel.countDocuments()
+        ]);
+
+    const totalPages = Math.ceil(totalJobs / limit);
+    res.status(200).json({
+        message:"jobs fetched",
+        data,
+        pagination:{
+            length:totalJobs,
+            pages:totalPages,
+            currentPage:page,
+            limit
+        }
+    })
 }

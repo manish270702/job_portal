@@ -13,8 +13,7 @@ const jobSchema = new mongoose.Schema({
 
     company:{
         type:String,
-        required:true,
-        unique:true
+        required:true
     },
 
     recruiterId:{
