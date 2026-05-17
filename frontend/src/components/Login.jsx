@@ -1,6 +1,6 @@
 import React from 'react'
 import { useForm } from "react-hook-form"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from '../api/api'
 function Login() {
   const {
@@ -11,9 +11,16 @@ function Login() {
     formState: { errors },
   } = useForm()
 
+  const navigate = useNavigate()
+
   const onSubmit = async(data) => {
     const response = await axios.post('auth/login', data)
-    alert(response.data.message)
+    // alert(response)
+    // console.log(response)
+
+    if (response.status==201){
+      navigate("/home")
+    }
     reset()
   }
   

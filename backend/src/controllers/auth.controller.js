@@ -41,6 +41,10 @@ exports.register = async (req, res) => {
             user
         })
 
+        // res.redirect("/home")
+
+        
+
     } catch (error) {
         console.log(error)
 
@@ -84,6 +88,8 @@ exports.login = async (req, res) => {
             message: "user login successsfully",
             isuser
         })
+
+        // res.redirect("/home")
 
     } catch (error) {
         console.log(error)
