@@ -71,7 +71,7 @@ exports.login = async (req, res) => {
         const ispassword = await bcrypt.compare(password, isuser.password,)
 
         if (!ispassword) {
-            return res.status(403).json({
+            return res.status(402).json({
                 message: "something went wrong"
             })
         }

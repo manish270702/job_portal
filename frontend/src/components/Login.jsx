@@ -2,6 +2,7 @@ import React from 'react'
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../api/api'
+import { ToastContainer, toast } from 'react-toastify';
 function Login() {
   const {
     register,
@@ -18,8 +19,14 @@ function Login() {
     // alert(response)
     // console.log(response)
 
+    if(response.status==409){
+      toast.error(response.data.message);
+      navigate("/")
+    }
+
     if (response.status==201){
-      navigate("/home")
+      toast.success(response.data.message);
+      navigate("/createJob")
     }
     reset()
   }

@@ -10,6 +10,14 @@ exports.createjob =async (req,res)=>{
             message:"UnAuthorised user"
         })
     }
+
+    const jobAlreadyCreated = await jobModel.findOne({title,company})
+
+    if(jobAlreadyCreated){
+        return res.status(409).json({
+            message:"Job already posted"
+        })
+    }
     const newJob = await jobModel.create({
         title,location,company,salary,jobtype,recruiterId:user._id
     }) 
