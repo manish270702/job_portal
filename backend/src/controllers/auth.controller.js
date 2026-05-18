@@ -43,10 +43,10 @@ exports.register = async (req, res) => {
 
         // res.redirect("/home")
 
-        
+
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
 
         res.status(500).json({
             message: error.message
@@ -92,7 +92,7 @@ exports.login = async (req, res) => {
         // res.redirect("/home")
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).json({
             message: error.message
         })
@@ -101,11 +101,34 @@ exports.login = async (req, res) => {
 
 }
 
+exports.profile = async (req, res) => {
+    try {
+        const user = req.user
 
-exports.getUserRole = (req, res) => {
-    const role = req.user.role;
+        res.status(200).json({
+            message: "succes",
+            user
+        })
+    } catch (error) {
+        res.status(404).json("user not found")
+    }
+}
 
-    res.status(200).json({
-        role,
-    });
-};
+exports.updateProfile = async (req, res) => {
+    const { name, bio } = req.body
+
+    const user = await userModel.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+            name,
+            $set: {
+                "profile.bio": bio
+            }
+        },
+        { new: true }
+    ).select("-password")
+
+    // console.log(user)
+
+    res.json(user)
+}

@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import axios from '../api/api'
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function Home() {
+const Navigate = useNavigate()
+
 
   const [data, setdata] = useState([])
   const [page, setpage] = useState(1)
@@ -21,7 +25,7 @@ function Home() {
       const response = await axios.get('/jobs', {
         params: {
           page,
-          limit: 10
+          limit: 20
         }
       })
 
@@ -31,7 +35,11 @@ function Home() {
       
       
     } catch (error) {
-      
+
+      if (error.response && error.response.status === 401) {
+        toast.error("Please login to continue");
+        Navigate('/login')
+      }
       console.log(error)
       
     } finally {
@@ -41,9 +49,6 @@ function Home() {
     }
   }
 
-  // useEffect(() => {
-  //   fetchData()
-  // }, [])
 
   return (
 
@@ -52,13 +57,13 @@ function Home() {
       next={fetchData}
       hasMore={page <= totalpages}
       loader={<h4>Loading...</h4>}
-      className='grid grid-cols-2 gap-5 px-8 py-8'
+      className='grid grid-cols-5 gap-5 px-8 py-4'
     >
 
       {data.map((item) => (
         <div
           key={item._id}
-          className="border rounded-md p-3"
+          className="border rounded-md p-3 h-52"
         >
           <h1 className="text-xl font-bold">
             {item.title}
@@ -68,7 +73,8 @@ function Home() {
           <p>{item.location}</p>
           <p>{item.salary}</p>
           <p>{item.jobtype}</p>
-
+          <p>hello</p>
+          <p>hello</p>
         </div>
       ))}
 

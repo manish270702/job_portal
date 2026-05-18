@@ -24,7 +24,7 @@ exports.checkRole = async (req, res, next) => {
 
     const user = await userModel.findOne({
       email: decoded.email,
-    });
+    }).select('-password');
 
     if (!user) {
       return res.status(404).json({

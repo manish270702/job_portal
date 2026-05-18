@@ -21,7 +21,7 @@ function Login() {
     try {
 
       const response = await axios.post(
-        'auth/login',
+        'auth/',
         data,
         {
           withCredentials: true
@@ -33,7 +33,7 @@ function Login() {
         toast.success(response.data.message)
 
         setTimeout(() => {
-          navigate("/createJob")
+          navigate("/home")
         }, 1500)
       }
 
@@ -58,13 +58,26 @@ function Login() {
       <ToastContainer />
 
       <form
-        className="bg-transparent p-6 rounded shadow-md flex flex-col gap-4 w-1/4"
+        className="bg-transparent p-6 rounded shadow-md flex flex-col gap-2 w-1/4"
         onSubmit={handleSubmit(onSubmit)}
       >
 
         <h2 className="text-2xl font-bold text-center">
           Welcome!
         </h2>
+
+        <input
+          type="text"
+          className="bg-transparent border-b px-3 py-2 border-white/30 focus:outline-none focus:border-blue-500"
+          placeholder="Enter your name"
+          {...register("name", {
+            required: "name is required"
+          })}
+        />
+
+        <p className="text-red-500 text-sm">
+          {errors.name?.message}
+        </p>
 
         <input
           type="email"
@@ -96,13 +109,13 @@ function Login() {
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Login
+          Register
         </button>
 
         <p>
           Don't have an account?
-          <Link to="/" className="text-blue-500 hover:underline ml-1">
-            Register
+          <Link to="/login" className="text-blue-500 hover:underline ml-1">
+            Login
           </Link>
         </p>
 

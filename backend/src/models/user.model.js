@@ -24,19 +24,25 @@ const userSchema = new mongoose.Schema({
     },
 
     profile: {
+        bio: {
+            type: String,
+            trim: true
+        },
         resumeURL: {
             type: String
         },
 
-        skills: [
-            {type: String}
+        posts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Job"
+            }
         ],
 
-        bio: {
-            type: String
-        }
+        skills: [
+            { type: String }
+        ]
     }
-
 })
 
 module.exports = mongoose.model("User", userSchema)
