@@ -40,7 +40,7 @@ exports.showjobs = async (req,res)=>{
     // console.log(page)
 
     const [data, totalJobs] = await Promise.all([
-            jobModel.find().sort({ createdAt: -1 }).skip(skipIndex).limit(limit),
+            jobModel.find().sort({ title: -1 }).skip(skipIndex).limit(limit),
             jobModel.countDocuments()
         ]);
 
