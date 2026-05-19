@@ -1,88 +1,106 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from '../api/api'
 
 function EditProfile() {
+
     const {
         register,
         handleSubmit,
-        watch,
-        reset,
+        setValue,
         formState: { errors },
     } = useForm()
 
     const navigate = useNavigate()
 
-    const [data, setData] = useState(null)
-    const [name, setname] = useState(null)
-    const [bio, setbio] = useState(null)
-
     const getProfile = async () => {
+
         const response = await axios.get('auth/profile')
 
-        setData(response.data.user)
-        setname(response.data.user.name)
-        setbio(response.data.user.bio)
+        const user = response.data.user
+        // console.log(user)
 
-        if (response.status == 409) {
-            toast.error(response.data.message);
-            navigate("/login")
-        }
-
-        if (response.status == 201) {
-            toast.success(response.data.message);
-            // navigate("/profile")
-        }
-        // reset()
+        // set default values
+        setValue("name", user.name)
+        setValue("bio", user.profile.bio)
     }
+
     useEffect(() => {
         getProfile()
     }, [])
 
-
-
-    // console.log(name, bio)
     const onSubmit = async (data) => {
-        // console.log(data)
-        const response = await axios.patch('auth/updateProfile', data)
-        // alert(response)
-        // console.log(response)
 
-        // if (response.status == 409) {
-        //     toast.error(response.data.message);
-        //     navigate("/login")
-        // }
+        
+        const formData = new FormData()
+        
+        formData.append("name", data.name)
+        formData.append("bio", data.bio)
+        
+        // file
+        formData.append("resumeUrl", data.resumeUrl[0])
 
-        // if (response.status == 201) {
-        //     toast.success(response.data.message);
-        //     navigate("/profile")
-        // }
-        // reset()
+        const response = await axios.patch(
+            'auth/updateprofile',
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+        )
+
+        console.log(response)
     }
 
     return (
         <div className="h-screen p-4 relative flex items-center justify-center">
-            <h2 className="text-2xl absolute top-5 left-6">welcome</h2>
 
-            <form className="bg-transparent z-10 w-1/3 p-6 rounded shadow-xl shadow-zinc-500 flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex items-center justify-between'>
-                    <h3 className='text-xl font-bold'>Edit Your Details</h3>
-                    {/* <Link className='px-3 py-2 rounded bg-blue-500 hover:bg-blue-600 duration-300 text-white' to="/edit-profile">Edit</Link> */}
-                </div>
-                <label htmlFor="name">Name:</label>
-                <input id='name' type="name" className="bg-transparent border-b px-3 py-2 w-full  focus:outline-none border-zinc-300 focus:border-blue-500" placeholder="Enter your name" {...register("name")} value={name} onChange={(e)=>setname(e.target.value)} />
-                <label htmlFor="email">Email:</label>
-                <input type="file" className="bg-transparent border px-3 py-2 w-full border-zinc-300"  {...register("resumeUrl")} />
-                <label htmlFor="bio">Bio:</label>
-                <textarea id='bio' type="text" className="bg-transparent border-b px-3 py-2 w-full border-zinc-300 focus:outline-none h-32 resize-none focus:border-blue-500" placeholder="About you" {...register("bio")} value={bio} ></textarea>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 duration-300">
+            <form
+                className="bg-transparent z-10 w-1/3 p-6 rounded shadow-xl shadow-zinc-500 flex flex-col gap-2"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+
+                <h3 className='text-xl font-bold'>
+                    Edit Your Details
+                </h3>
+
+                <label>Name:</label>
+
+                <input
+                    type="text"
+                    className="bg-transparent border-b px-3 py-2 w-full"
+                    placeholder="Enter your name"
+                    {...register("name")}
+                    
+                />
+
+                <label>Resume:</label>
+
+                <input
+                    type="file"
+                    className="bg-transparent border px-3 py-2 w-full"
+                    {...register("resumeUrl")}
+                />
+
+                <label>Bio:</label>
+
+                <textarea
+                    className="bg-transparent border-b px-3 py-2 w-full h-32 resize-none"
+                    placeholder="About you"
+                    {...register("bio")}
+                />
+
+                <button
+                    type="submit"
+                    className="bg-blue-500 text-white py-2 px-4 rounded mt-4"
+                >
                     save changes
                 </button>
 
             </form>
         </div>
-
     )
 }
 

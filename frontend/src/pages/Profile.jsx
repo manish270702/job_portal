@@ -19,7 +19,7 @@ function Profile() {
     const getProfile = async () => {
         const response = await axios.get('auth/profile')
         // alert(response)
-        console.log(response.data.user)
+        // console.log(response.data.user)
         setData(response.data.user)
 
         if (response.status == 409) {

@@ -2,6 +2,8 @@ const userModel = require('../models/user.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { checkRole } = require('../middlewares/checkRole')
+const imagekit = require('../services/Imagekit.service')
+const client = require('../services/Imagekit.service')
 
 
 exports.register = async (req, res) => {
@@ -115,20 +117,56 @@ exports.profile = async (req, res) => {
 }
 
 exports.updateProfile = async (req, res) => {
-    const { name, bio } = req.body
 
-    const user = await userModel.findOneAndUpdate(
-        { _id: req.user._id },
-        {
-            name,
-            $set: {
-                "profile.bio": bio
-            }
-        },
-        { new: true }
-    ).select("-password")
+    try {
 
-    // console.log(user)
+        const { name, bio } = req.body
 
-    res.json(user)
+        let uploadedResume = null
+
+        if (req.file) {
+
+            const fileUpload = await client.upload({
+
+                file: req.file.buffer.toString("base64"),
+
+                fileName:
+                    Date.now() + "-" + req.file.originalname,
+
+                folder: "/resumes",
+            })
+
+            uploadedResume = fileUpload.url
+
+            console.log(uploadedResume)
+        }
+
+        const user = await userModel.findOneAndUpdate(
+            { _id: req.user._id },
+
+            {
+                name,
+
+                $set: {
+                    "profile.bio": bio,
+                    "profile.resumeURL": uploadedResume
+                }
+            },
+
+            { new: true }
+        ).select("-password")
+
+        res.status(200).json({
+            message: "Profile updated",
+            user
+        })
+
+    } catch (error) {
+
+        console.log(error)
+
+        res.status(500).json({
+            message: error.message
+        })
+    }
 }
